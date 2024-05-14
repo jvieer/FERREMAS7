@@ -1,0 +1,148 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+{% load crispy_forms_tags %}
+
+      
+      <section class="login_box_area section-margin">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="login_box_img">
+						<div class="hover">
+							<h4>¡Subscribete!</h4>
+							<p>Obten el beneficio de un descuento</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="login_form_inner register_form_inner">
+						<h3>Subscripcion</h3>
+						<form method="POST">
+							{% csrf_token %}
+							{{ form.as_p }}
+						  </form>
+						  <div id = "btnPaypal"></div>
+					</div>
+				</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	{% endblock %}
+
+    {% block js %}
+
+
+
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+
+
+<script>
+    function validarFormulario() {
+    var formulario = document.getElementById('form'); // ID del formulario
+
+    if (formulario.checkValidity()) {
+        
+        return true;
+    } else {
+        // El formulario no es vÃ¡lido
+        formulario.reportValidity(); // Muestra los mensajes de validaciÃ³n nativos del navegador
+        return false;
+    }
+    }
+</script>
+
+
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script>
+  paypal.Button.render({
+    env: 'sandbox',
+    client: {
+		sandbox: 'AUbyYWi5sLEJdpufwUULYJeSKjxSDesn86WTeir5R-0t0LpJLVD6UbeYprN2qGHgd5aOQLfzx3yDY292',
+		production: 'demo_production_client_id'
+    },
+    locale: 'es_CL',
+    style: {
+      size: 'large', // small, medium, large
+      color: 'black', // gold, black
+      shape: 'rect' // pill, rect
+    },
+    commit: true,
+    payment: function (data, actions) {
+      if (validarFormulario()) {
+        var cantidad = document.getElementById("id_cantidad").value;
+
+        return actions.payment.create({
+          transactions: [{
+            amount: {
+              total: cantidad,
+              currency: 'USD'
+            }
+          }]
+        });
+      }
+    },
+    onAuthorize: function (data, actions) {
+      return actions.payment.execute().then(function () {
+        // Lógica posterior al pago exitoso
+
+        var url = "{% url 'subsForm' %}";
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = url;
+
+        var csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+        var cantidad = document.getElementById("id_cantidad").value;
+
+        var inputToken = document.createElement("input");
+        inputToken.type = "hidden";
+        inputToken.name = "csrfmiddlewaretoken";
+        inputToken.value = csrfToken;
+
+        var inputCantidad = document.createElement("input");
+        inputCantidad.type = "hidden";
+        inputCantidad.name = "cantidad";
+        inputCantidad.value = cantidad;
+
+        form.appendChild(inputToken);
+        form.appendChild(inputCantidad);
+
+        document.body.appendChild(form);
+        form.submit();
+      });
+    },
+    onCancel: function (data) {
+      Swal.fire({
+        title: 'Pago Cancelado',
+        text: '¡El pago ha sido cancelado!',
+        icon: 'error',
+        showCancelButton: false,
+        confirmButtonColor: '#333CFF',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Aceptar'
+      });
+    },
+    onError: function (err) {
+      Swal.fire({
+        title: 'Error de pago',
+        text: '¡Ha ocurrido un error con el pago!',
+        icon: 'error',
+        showCancelButton: false,
+        confirmButtonColor: '#333CFF',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Aceptar'
+      });
+    }
+
+  }, '#btnPaypal');
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+ 

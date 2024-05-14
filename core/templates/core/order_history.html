@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+{% block contenido %}
+    <h2>Historial de Pedidos</h2>
+    {% if compras %}
+        <ul>
+            {% for compra in compras %}
+                <li>
+                    <h3>Número de Pedido: {{ compra.id }}</h3>
+                    <p>Total: ${{ compra.total }}</p>
+                    <p>Fecha: {{ compra.fecha }}</p>
+                    <!-- Aquí puedes mostrar más detalles si lo deseas -->
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay pedidos realizados.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,213 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+  <!--================ Start Header Menu Area =================-->
+
+	<!--================ End Header Menu Area =================-->
+
+
+  <!-- ================ start banner area ================= -->	
+  <section class="blog-banner-area" id="blog">
+    <div class="container h-100">
+      <div class="blog-banner">
+        <div class="text-center">
+          <h1>Nuestro blog</h1>
+          <nav aria-label="breadcrumb" class="banner-breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Blog</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ================ end banner area ================= -->
+
+
+  <!--================Blog Categorie Area =================-->
+  <section class="blog_categorie_area">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
+            <div class="categories_post">
+                <img class="card-img rounded-0" src="{% static 'core/img/home/perrito_blancos.jpg'%}" alt="post" width="600px" height="400px">
+                <div class="categories_details">
+                    <div class="categories_text">
+                        <a href="single-blog.html">
+                            <h5>Amamos a</h5>
+                        </a>
+                        <div class="border_line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
+          <div class="categories_post">
+            <img class="card-img rounded-0" src="{% static 'core/img/home/shazam_de_perritos.jpg'%}" alt="post" width="600px" height="400px">
+            <div class="categories_details">
+              <div class="categories_text">
+                <a href="single-blog.html">
+                    <h5>Nuestras</h5>
+                </a>
+                <div class="border_line"></div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
+            <div class="categories_post">
+                <img class="card-img rounded-0" src="{% static 'core/img/home/frutas-que-si-pueden-comer-los-perros.jpg'%}" alt="post" width="600px" height="400px">
+                <div class="categories_details">
+                    <div class="categories_text">
+                        <a href="single-blog.html">
+                            <h5>Mascotas</h5>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--================Blog Categorie Area =================-->
+  
+  <!--================Blog Area =================-->
+  <section class="blog_area">
+      <div class="container">
+          <div class="row">
+              <div class="col-lg-8">
+                  <div class="blog_left_sidebar">
+                      <article class="row blog_item">
+                          <div class="col-md-3">
+                          </div>
+                          <div class="col-md-9">
+                              <div class="blog_post">
+                                  <img src="{% static 'core/img/home/frutas-que-si-pueden-comer-los-perros.jpg'%}" alt="" width="300px" height="300px">
+                                  <div class="blog_details">
+                                      <a href="single-blog.html">
+                                          <h2>¿Como surgió?</h2>
+                                      </a>
+                                      <p>Un grupo de amigas se propuso vender articulos para mascotas por las redes sociales.
+                                      </p>
+                                      <a class="button button-blog" href="single-blog.html">Ver mas...</a>
+                                  </div>
+                              </div>
+                          </div>
+                      </article>
+                      <article class="row blog_item">
+                          <div class="col-md-3">
+                            
+                          </div>
+                          <div class="col-md-9">
+                              <div class="blog_post">
+                                  <img src="{% static 'core/img/home/frutas-que-si-pueden-comer-los-perros.jpg'%}" alt="" width="300px" height="300px">
+                                  <div class="blog_details">
+                                      <a href="single-blog.html">
+                                          <h2>Y debido a la gran demanda...</h2>
+                                      </a>
+                                      <p> decidieron contratar alumnos de Duoc UC para poder crear una página web para vender sus productos.</p>
+                                      <a href="single-blog.html" class="button button-blog">Ver mas...</a>
+                                  </div>
+                              </div>
+                          </div>
+                      </article>
+                      <article class="row blog_item">
+                          <div class="col-md-3">
+                              <div class="blog_info text-right">
+                                  
+                              </div>
+                          </div>
+                          <div class="col-md-9">
+                              <div class="blog_post">
+                                  <img src="{% static 'core/img/home/frutas-que-si-pueden-comer-los-perros.jpg'%}" alt="" width="300px" height="300px">
+                                  <div class="blog_details">
+                                      <a href="single-blog.html">
+                                          <h2>Por eso...</h2>
+                                      </a>
+                                      <p>Se creó esta página para que tú puedas comprar productos para tus mascotas, a un bajo costo y más accesible.</p>
+                                      <a href="single-blog.html" class="button button-blog">Ver mas...</a>
+                                  </div>
+                              </div>
+                          </div>
+                      </article>
+                      <article class="row blog_item">
+                          <div class="col-md-3">
+                              <div class="blog_info text-right">
+                                  <div class="post_tag">
+
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="col-md-9">
+                              <div class="blog_post">
+                                  <img src="{% static 'core/img/home/frutas-que-si-pueden-comer-los-perros.jpg'%}" alt="" width="300px" height="300px">
+                                  <div class="blog_details">
+                                      <a href="single-blog.html">
+                                          <h2>Además...</h2>
+                                      </a>
+                                      <p>Todo lo que se logre recaudar, irá destinado a una fundación sin fines de lucro.</p>
+                                      <a href="single-blog.html" class="button button-blog">Ver mas...</a>
+                                  </div>
+                              </div>
+                          </div>
+                      </article>
+                      <article class="row blog_item">
+                          <div class="col-md-3">
+                              <div class="blog_info text-right">
+                                  <div class="post_tag">
+                                  </div>
+                                  <ul class="blog_meta list">
+                                      
+                              </div>
+                          </div>
+                          <div class="col-md-9">
+                              <div class="blog_post">
+                                  <img src="{% static 'core/img/home/frutas-que-si-pueden-comer-los-perros.jpg'%}" alt="" width="300px" height="300px">
+                                  <div class="blog_details">
+                                      <a href="single-blog.html">
+                                          <h2>Esperamos que...</h2>
+                                      </a>
+                                      <p>La página web sea de su agrado y que disfruten sus productos para sus mascotas!</p>
+                                      <a href="single-blog.html" class="button button-blog">Ver mas...</a>
+                                  </div>
+                              </div>
+                          </div>
+                      </article>
+                      
+                  </div>
+              </div>
+              <div class="col-lg-4">
+                  <div class="blog_right_sidebar">
+                      <aside class="single_sidebar_widget search_widget">
+                          <div class="input-group">
+                              <input type="text" class="form-control" placeholder="Buscar">
+                              <span class="input-group-btn">
+                                  <button class="btn btn-default" type="button">
+                                      <i class="lnr lnr-magnifier"></i>
+                                  </button>
+                              </span>
+                          </div>
+                          <!-- /input-group -->
+                          <div class="br"></div>
+                      </aside>
+    
+                
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  <!--================Blog Area =================-->
+
+  <!--================Instagram Area =================-->
+
+  <!--================End Instagram Area =================-->
+
+  <!--================ Start footer Area  =================-->	
+
+	<!--================ End footer Area  =================-->
+
+    {% endblock %}

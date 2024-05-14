@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+{% endblock %}
+{% block contenido %}
+
+<section class="login_box_area section-margin"  background-size: cover; background-position: center;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6" >
+                <div class="login_box_img"  style="background-image: url('/media/herra.jpg');">
+                    <div class="hover">
+                        <h4>¿No tienes una cuenta?</h4>
+                        <p>Los beneficios de tener una cuenta incluyen: comprar productos y la posibilidad de suscripción.</p>
+                        <a class="button button-account" href="{% url 'registro' %}" style="background-color: rgb(255, 217, 0);">Crear una cuenta</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="login_form_inner" style="background-color: rgb(255, 255, 255);">
+                    <h3>Iniciar Sesión</h3>
+                    <form class="row login_form" action="#/" id="contactForm" method="post">
+                        {% csrf_token %}
+                        {{ form | crispy }}
+                        
+                        <div class="col-md-12 form-group">
+                            <div class="creat_account">
+                                <input type="checkbox" id="f-option2" name="selector">
+                                <label for="f-option2">Mantener sesión iniciada</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input style="background-color: rgb(255, 217, 0);" type="submit" class="button button-login w-100" value="Ingresar">
+                            <a href="#">¿Olvidó su contraseña?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+

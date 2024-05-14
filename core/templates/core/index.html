@@ -1,0 +1,133 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+
+{% if user.is_superuser %}
+
+{% else %}
+<!-- ================ 
+   <section class="section-margin mt-0">
+      <div class="owl-carousel owl-theme hero-carousel">
+        <div class="hero-carousel__slide">
+          <img src="{% static 'core/img/home/bandanasola.jpg' %}" alt="" class="img-fluid">
+          <a href="#" class="hero-carousel__slideOverlay">
+            <h3>Bandana </h3>
+            <p>Accesorios</p>
+          </a>
+        </div>
+        <div class="hero-carousel__slide">
+          <img src="{% static 'core/img/home/identificadorsolo.jpg' %}" alt="" class="img-fluid">
+          <a href="#" class="hero-carousel__slideOverlay">
+            <h3>Identificador</h3>
+            <p>Accesorios</p>
+          </a>
+        </div>
+        <div class="hero-carousel__slide">
+          <img src="{% static 'core/img/home/correasola.webp '%}" alt="" class="img-fluid">
+          <a href="#" class="hero-carousel__slideOverlay">
+            <h3>Correa</h3>
+            <p>Accesorios</p>
+          </a>
+        </div>
+      </div>
+    </section>
+    ================= --> 
+    {% endif %}
+    
+   
+
+    {% if user.is_superuser %}
+    
+    {% else %}
+    <section class="offer" id="parallax-1" data-anchor-target="#parallax-1" data-300-top="background-position: 20px 30px" data-top-bottom="background-position: 0 20px" style="background-image: url('/media/madera.jpg');">
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-5">
+            <div class="offer__content text-center">
+              <p>Bienvenidos a</p>
+              <!-- Título FERREMAS más grande y centrado -->
+              <h3 style="font-size: 8em; margin: 0 auto; color: rgb(255, 255, 255);">FERREMAS</h3>
+              <h4></h4>
+              <!-- Formulario de búsqueda mejorado con bordes redondeados -->
+              <form action="/buscar" method="GET">
+                <div class="input-group mb-3 rounded-pill">
+                  <input type="text" class="form-control rounded-pill" name="q" placeholder="Buscar productos..." required>
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary rounded-pill" type="submit">Buscar</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="section-margin calc-60px">
+      <div class="container">
+        {% if user.is_superuser %}
+        <div class="section-intro pb-60px">
+          <h2><span class="section-intro__style">Administracion de Productos</span></h2>
+        </div>
+        {% else %}
+        <div class="section-intro pb-60px">
+        <p>Algunos productos disponibles del mercado</p>
+        <h2><span class="section-intro__style">Nuestros Productos</span></h2>
+        </div>
+        {% endif %}
+
+        
+        <div class="row">
+          {% for aux in listaProductos %}
+          <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card text-center card-product">
+              <div class="card-product__img">
+                  {% if aux.imagen %}
+                  <img class="card-img" src="{{ aux.imagen.url }}">
+                  {% else %}
+                  <img class="card-img" src="ruta statica">
+                  {% endif %}
+                <ul class="card-product__imgOverlay">
+                  {% if user.is_superuser %}
+                  <li><button onclick="deleteProducto({{ aux.id }})"><i class="ti-trash"></i></button></li>
+                  <li><button><a href="{% url 'update' aux.id %}"><i class="ti-reload"></i></button></li></a>
+                  <li><button><a href="{% url 'add' %}"><i class="ti-plus"></i></button></li></a>
+                  {% else %}
+                  <li><a href="{% url 'singleproduct' aux.id %}"><button><i class="ti-search"></i></button></a></li>
+                  <li><button><a href="{% url 'cartadd' aux.id %}"><i class="ti-shopping-cart"></i></button></li></a>
+                  {% endif %}
+                </ul>
+              </div>
+              <div class="card-body">
+                <h4 class="card-product__title"><a href="{% static 'core/single-product.html' %}">{{ aux.nombre }}</a></h4>
+                {% if aux.precio <= 0 %}
+                <p style = "color: red;" >ERROR PRECIO</p>
+                {% else %}
+                <p class="card-product__price">${{ aux.precio }}</p>
+                {% endif %}
+                {% if aux.stock >= 9 %}
+                <p>Stock: {{ aux.stock }}</p>
+                {% else %}
+                <p style = "color: red;" >AGOTADO</p>
+                {% endif %}
+                
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% if user.is_superuser %}
+        {% include 'core/paginator.html' %}
+        {% else %}
+        
+        {% endif %}
+      </div>
+    </section>
+
+ {% endblock %}
+
+ {% block js %}
+
+ {% endblock %}

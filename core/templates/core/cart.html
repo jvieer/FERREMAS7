@@ -1,0 +1,208 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+{% load humanize %}
+
+
+{% block css %}
+
+{% endblock %}
+
+
+    <!--================ Start Header Menu Area =================-->
+
+    <!--================ End Header Menu Area =================-->
+
+    <!-- ================ start banner area ================= -->
+
+    <!-- ================ end banner area ================= -->
+
+
+
+    <!--================Cart Area =================-->
+    <section class="cart_area">
+        <div class="container">
+            <div class="cart_inner">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for x in items %}
+                                <tr>
+                                    <td>
+                                        <div class="media">
+                                            <div class="d-flex">
+                                                <img src="{{x.producto.imagen.url}}" alt="" height="80px" width="60px">
+                                            </div>
+                                            <div class="media-body">
+                                                <p>{{ x.producto.nombre }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h5>${{ x.producto.precio }}</h5>
+                                    </td>
+                                    <td>
+                                        <h5><a href="{% url 'cartdel'  x.producto.id %}" style="text-decoration: none;"><i class="ti-minus"></i></a>
+                                            {{ x.cantidad }}
+                                            <a href="{% url 'cartaddd'  x.producto.id %}" style="text-decoration: none;"><i class="ti-plus"></i></a>
+                                        </h5>
+                                    </td>
+                                    <td>
+                                        <h5>${{ x.subtotal }}</h5>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'cartdelete' x.producto.id %}" style="text-decoration: none;"><i class="ti-trash"></i></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            
+                            <tr class="bottom_button">
+                                <td>
+                                   
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <h5>Total</h5>
+                                </td>
+                                <td>
+                                    <h5>${{total}}</h5>
+                                </td>
+                            </tr>
+                            <tr class="shipping_area">
+                                <td class="d-none d-md-block">
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            <tr class="out_button_area">
+                                <td class="d-none-l">
+
+                                </td>
+                                <td class="">
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <div class="checkout_btn_inner d-flex align-items-center">
+                                        <a class="gray_btn" href="{% url 'category' %}">Seguir Comprando</a>
+                                        <div id = "btnPaypal"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+   
+
+
+
+   
+    {% endblock %}
+    
+
+
+
+    {% block js %}
+    <script src= "http://www.paypalobjects.com/api/checkout.js"></script>
+<script>
+	paypal.Button.render({
+		env: 'sandbox',
+		client: {
+			sandbox: 'AUbyYWi5sLEJdpufwUULYJeSKjxSDesn86WTeir5R-0t0LpJLVD6UbeYprN2qGHgd5aOQLfzx3yDY292',
+			production: 'demo_production_client_id'
+		},
+		locale: 'es_CL',
+		style: {
+			size: 'large', // small, medium, large
+			color: 'black', // gold, black
+			shape: 'rect' // pill , rect
+		},
+		commit: true,
+		payment: function (data,actions) {
+			return actions.payment.create({
+				transactions: [{
+					amount: {
+						total: '{{total}}',
+						currency: 'USD'
+					}
+				}]
+			});
+		},
+		onAuthorize: function (data, actions) {
+			return actions.payment.execute().then(function(){
+				// LOGICA DESPUES DEL PAGO
+				Swal.fire({
+					title: 'Pago Exitoso',
+					text: 'Pago realizado correctamente!',
+					icon: 'success',
+					showCancelButton: false,
+					confirmButtonColor: '#333CFF',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'Aceptar'
+				});
+			})
+		},
+		onCancel(data) {
+			Swal.fire({
+				title: 'Pago Cancelado',
+				text: 'El pago ha sido cancelado!',
+				icon: 'error',
+				showCancelButton: false,
+				confirmButtonColor: '#333CFF',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Aceptar'
+			});
+		},
+		onError(err) {
+			Swal.fire({
+				title: 'Error de pago',
+				text: 'Ha ocurrido un error con el pago!',
+				icon: 'error',
+				showCancelButton: false,
+				confirmButtonColor: '#333CFF',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Aceptar'
+			});
+		}
+		
+	}, '#btnPaypal');
+  </script>
+    {% endblock %}
+
+    

@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Ferremas - Home</title>
+  <link rel="icon" href="img/Fevicon.png" type="image/png">
+  <link rel="stylesheet" href="{% static 'core/vendors/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'core/vendors/fontawesome/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'core/vendors/themify-icons/themify-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'core/vendors/nice-select/nice-select.css' %}">
+  <link rel="stylesheet" href="{% static 'core/vendors/owl-carousel/owl.theme.default.min.css' %}">
+  <link rel="stylesheet" href="{% static 'core/vendors/owl-carousel/owl.carousel.min.css' %}">
+  <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+  {% block css %}
+
+  {% endblock %}
+  
+</head>
+<body>
+ 
+  <header class="header_area">
+		<div class="main_menu">
+		  <nav class="navbar navbar-expand-lg navbar-light">
+			<div class="container">
+			  <a class="navbar-brand logo_h" href="{% url 'index' %}" style="font-family: fantasy;" >FERREMAS</a>
+			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			  </button>
+			  <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+				<ul class="nav navbar-nav menu_nav ml-auto mr-auto">
+				  <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+				  <li class="nav-item active submenu dropdown">
+
+								</li>
+					{% if user.is_superuser %}
+
+					{% else %}
+					{% endif %}
+								<li class="nav-item submenu dropdown">
+					{% if user.is_authenticated %}	
+					<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+					  aria-expanded="false">@{{ user.username }}</a>
+					{% else %}
+					<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+					  aria-expanded="false">Usuario</a>
+					{% endif %}
+					<ul class="dropdown-menu">
+						
+						{% if user.is_authenticated %}
+						<li class="nav-item"><a class="nav-link" href="{% url 'perfil' %}">perfil</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'order_history' %}">Historial</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'tracking-order' %}">Envio</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'cart' %}">Carrito</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Cerrar sesion</a></li>
+						{% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Iniciar sesion</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'registro' %}">Registrarse</a></li>
+						{% endif %}
+						{% if user.is_superuser %}
+						<li class="nav-item"><a class="nav-link" href="{% url 'asignar_roles' %}">Asignar Roles</a></li>
+					  {% endif %}
+					
+					
+					</ul>
+				  </li>
+				</ul>
+				{% if user.is_superuser %}
+
+				{% else %}
+
+
+
+
+				{% endif %}
+	
+				<ul class="nav-shop">
+				  {% if user.is_authenticated %}
+				  
+				  {% else %}
+				  <li class="nav-item"><a class="button button-header" href="{% url 'login' %}">Comprar</a></li>
+				  
+				  {% endif %}
+				</ul>
+			  </div>
+			</div>
+		  </nav>
+		</div>
+	  </header>
+      
+
+    {% block contenido %}
+    
+    {% endblock %}
+ 
+
+	  <footer style="background-image: url('/media/herra.jpg');">
+		<div class="footer-area">
+			<div class="container">
+				<div class="row section_gap">
+					<div class="col-lg-3 col-md-6 col-sm-6">
+						<div class="single-footer-widget tp_widgets">
+							<h4 class="footer_title large_title">Nuestro Compromiso</h4>
+							<p>
+								So seed seed green that winged cattle in. Gathering thing made fly you're no 
+								divided deep moved us lan Gathering thing us land years living.
+							</p>
+							<p>
+								So seed seed green that winged cattle in. Gathering thing made fly you're no divided deep moved 
+							</p>
+						</div>
+					</div>
+					<div class="offset-lg-1 col-lg-2 col-md-6 col-sm-6">
+						<div class="single-footer-widget tp_widgets">
+							<h4 class="footer_title">Valores actualizados</h4>
+							<ul class="list">
+								<li>UF: {{monedas.uf.valor}}</li>
+								<li>DOLAR: {{monedas.dolar.valor}}</li>
+							</ul>
+						</div>
+					</div>
+					
+					<div class="offset-lg-1 col-lg-3 col-md-6 col-sm-6">
+						<div class="single-footer-widget tp_widgets">
+							<h4 class="footer_title">Contactenos</h4>
+							<div class="ml-40">
+								<p class="sm-head">
+									<span class="fa fa-phone"></span>
+									Telefonos
+								</p>
+								<p>
+									22 2329286 <br>
+									+56 9 4856 7890
+								</p>
+	
+								<p class="sm-head">
+									<span class="fa fa-envelope"></span>
+									Email
+								</p>
+								<p>
+									petsfamily@gmail.com <br>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<div class="footer-bottom">
+			<div class="container">
+				<div class="row d-flex">
+					<p class="col-lg-12 footer-text text-center">
+						
+						Copyright &copy;<script>document.write(new Date().getFullYear());</script>
+						All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+						
+					</p>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+
+
+  <script src="{% static 'core/vendors/jquery/jquery-3.2.1.min.js' %}"></script>
+  <script src="{% static 'core/vendors/bootstrap/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'core/vendors/skrollr.min.js' %}"></script>
+  <script src="{% static 'core/vendors/owl-carousel/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'core/vendors/nice-select/jquery.nice-select.min.js' %}"></script>
+  <script src="{% static 'core/vendors/jquery.ajaxchimp.min.js' %}"></script>
+  <script src="{% static 'core/vendors/mail-script.js' %}"></script>
+  <script src="{% static 'core/js/main.js' %}"></script>
+  <script src="{% static 'core/js/mensajes.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% block js %}
+{% endblock %}
+
+</body>
+</html>

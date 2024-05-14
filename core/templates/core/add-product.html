@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block contenido %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 m-5">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <table>
+                    {{ form | crispy }}
+                </table>
+                <input type="submit" class="btn btn-success" value="Guardar">
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+
+{% if messages %} 
+{% for aux in messages %} 
+<script>
+Swal.fire({
+  title: 'Confirmado',
+  text: '{{ aux }}',
+  icon: 'success',
+  showCancelButton: false,
+  confirmButtonColor: '#333CFF',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Aceptar'
+}).then((result) => {
+  if (result.isConfirmed) {
+    //success
+  }
+})
+</script>
+{% endfor %} 
+{% endif %}
+
+
+{% endblock %}
