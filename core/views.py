@@ -14,6 +14,15 @@ from django.contrib.auth.models import Group
 from .forms import CustomUserCreationForm
 from django.contrib.auth.forms import UserCreationForm
 
+from django.shortcuts import render
+from django.contrib.auth.forms import PasswordResetForm
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
+
 # Create your views here.
 
 #funcion generica que valida grupos
@@ -153,7 +162,35 @@ def confirmation(request):
 
 def contact(request):
 	return render(request, 'core/contact.html')
-		
+
+
+def forgot_password(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            user = User.objects.get(email=email)
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            reset_url = f"http://example.com/reset-password/{uid}/{token}/"
+
+            # Envía el correo electrónico de restablecimiento de contraseña
+            subject = 'Restablecimiento de contraseña'
+            message = render_to_string('core/password_reset.html', {
+                'user': user,
+                'reset_url': reset_url,
+            })
+            send_mail(subject, message, 'tu_correo@gmail.com', [email])
+            
+            return render(request, 'core/password_reset.html')
+    else:
+        form = PasswordResetForm()
+    return render(request, 'core/forgot_password.html', {'form': form})
+
+
+def password_reset(request):
+	return render(request, 'core/password_reset.html')			
+
 def indexUser(request):
 	return render(request, 'core/indexUser.html')				
 						

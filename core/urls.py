@@ -26,6 +26,7 @@ urlpatterns = [
     path('confirmation/', confirmation, name = "confirmation"),
     path('order_history/', order_history, name="order_history"),
     path('contact/', contact,name = "contact"),
+    path('forgot-password/', forgot_password, name='forgot_password'),
     path('indexUser/', indexUser,name = "indexUser"),
     path('indexUserSubscito/', indexUserSubscito, name = "indexUserSubscito"),
     path('login/', login,name = "login"),
@@ -36,6 +37,10 @@ urlpatterns = [
     path('subsForm/', subsForm,name = "subsForm"),
     path('trackingorder/', trackingorder,name = "tracking-order"),
     path('asignar-roles/', asignar_roles, name='asignar_roles'),
+    path('password_reset/', password_reset, name='password_reset'),
+    #path('remover_grupo/<int:usuario_id>/<int:grupo_id>/', remover_grupo, name='remover_grupo'),
+
+
 
 
     #CRUD
