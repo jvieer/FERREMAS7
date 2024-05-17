@@ -90,19 +90,25 @@ def blogapi(request):
 	return render(request, 'core/blogapi.html', data)
 
 def index(request):
-	productosAll = Producto.objects.all()
-	page = request.GET.get('page', 1)
-	try:
-		paginator = Paginator(productosAll, 8)
-		productosAll = paginator.page(page)
-	except:
-	    raise Http404
+    try:
+        # Obtener datos de la API
+        response = requests.get('http://127.0.0.1:5000/productos')
+        response.raise_for_status()  # Lanza una excepción si la solicitud no es exitosa
+        productos_api = response.json()
 
-	data = {
-		'listaProductos': productosAll,
-		'paginator': paginator
-	}
-	return render(request, 'core/index.html', data)
+        # Paginar los productos
+        paginator = Paginator(productos_api, 8)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+
+    except Exception as e:
+        print(f"Error al obtener datos de la API: {e}")
+        raise Http404
+
+    data = {
+        'page_obj': page_obj,
+    }
+    return render(request, 'core/index.html', data)
 
 def blog(request):
 	return render(request, 'core/blog.html')
