@@ -3,6 +3,9 @@ from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save, post_migrate
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import HttpResponseForbidden
+from django.shortcuts import render
 
 # Model for Marca
 class Marca(models.Model):
@@ -96,3 +99,5 @@ def create_default_groups_and_superuser(sender, **kwargs):
     User = get_user_model()
     if not User.objects.filter(username='admin').exists():
         User.objects.create_superuser(username='admin', email='admin@example.com', password='admin')
+
+

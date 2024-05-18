@@ -106,12 +106,22 @@ def index(request):
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
 
+        # Determinar roles del usuario
+        user = request.user
+        roles = {
+            'is_admin': user.groups.filter(name='administrador').exists(),
+            'is_vendedor': user.groups.filter(name='vendedor').exists(),
+            'is_bodeguero': user.groups.filter(name='bodeguero').exists(),
+            'is_contador': user.groups.filter(name='contador').exists(),
+        }
+
     except Exception as e:
         print(f"Error al obtener datos de la API: {e}")
         raise Http404
 
     data = {
         'page_obj': page_obj,
+        'roles': roles,
     }
     return render(request, 'core/index.html', data)
 
@@ -458,3 +468,78 @@ def asignar_roles(request):
     grupos = Group.objects.all()
     return render(request, 'core/asignar_roles.html', {'usuarios': usuarios, 'grupos': grupos})
 
+# Vistas de Administrador
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administrador').exists())
+def informes_venta(request):
+    # Lógica para generar informes de venta mensual
+    return render(request, 'admin/informes_venta.html')
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administrador').exists())
+def informes_desempeno(request):
+    # Lógica para generar informes de desempeño de la tienda
+    return render(request, 'admin/informes_desempeno.html')
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administrador').exists())
+def estrategias_ventas(request):
+    # Lógica para desarrollar estrategias de ventas y promociones
+    return render(request, 'admin/estrategias_ventas.html')
+
+# Vistas de Vendedor/Encargado
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='vendedor').exists())
+def asesoramiento(request):
+    # Lógica para asesorar a los clientes en la selección de productos
+    return render(request, 'vendedor/asesoramiento.html')
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='vendedor').exists())
+def procesar_pedidos(request):
+    # Lógica para recibir y procesar pedidos
+    return render(request, 'vendedor/procesar_pedidos.html')
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='vendedor').exists())
+def gestion_pagos(request):
+    # Lógica para gestionar los pagos y facturación
+    return render(request, 'vendedor/gestion_pagos.html')
+
+# Vistas de Bodeguero
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='bodeguero').exists())
+def organizar_inventario(request):
+    # Lógica para organizar y mantener el inventario
+    return render(request, 'bodeguero/organizar_inventario.html')
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='bodeguero').exists())
+def preparar_entrega(request):
+    # Lógica para preparar y entregar los productos a los vendedores para su venta
+    return render(request, 'bodeguero/preparar_entrega.html')
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='bodeguero').exists())
+def almacenamiento_materiales(request):
+    # Lógica para asegurar el adecuado almacenamiento de los materiales
+    return render(request, 'bodeguero/almacenamiento_materiales.html')
+
+# Vistas de Contador
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='contador').exists())
+def registro_transacciones(request):
+    # Lógica para llevar el registro de las transacciones de venta
+    return render(request, 'contador/registro_transacciones.html')
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='contador').exists())
+def control_finanzas(request):
+    # Lógica para controlar y registrar los pagos y las finanzas de la tienda
+    return render(request, 'contador/control_finanzas.html')
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='contador').exists())
+def elaborar_reportes(request):
+    # Lógica para elaborar balances y reportes financieros
+    return render(request, 'contador/elaborar_reportes.html')

@@ -58,6 +58,25 @@ urlpatterns = [
     
     
 
+    # Vistas de Administrador
+    path('admin/informes_venta/', informes_venta, name='informes_venta'),
+    path('admin/informes_desempeno/', informes_desempeno, name='informes_desempeno'),
+    path('admin/estrategias_ventas/', estrategias_ventas, name='estrategias_ventas'),
+
+    # Vistas de Vendedor/Encargado
+    path('vendedor/asesoramiento/', asesoramiento, name='asesoramiento'),
+    path('vendedor/procesar_pedidos/', procesar_pedidos, name='procesar_pedidos'),
+    path('vendedor/gestion_pagos/', gestion_pagos, name='gestion_pagos'),
+
+    # Vistas de Bodeguero
+    path('bodeguero/organizar_inventario/', organizar_inventario, name='organizar_inventario'),
+    path('bodeguero/preparar_entrega/', preparar_entrega, name='preparar_entrega'),
+    path('bodeguero/almacenamiento_materiales/', almacenamiento_materiales, name='almacenamiento_materiales'),
+
+    # Vistas de Contador
+    path('contador/registro_transacciones/', registro_transacciones, name='registro_transacciones'),
+    path('contador/control_finanzas/', control_finanzas, name='control_finanzas'),
+    path('contador/elaborar_reportes/', elaborar_reportes, name='elaborar_reportes'),
 
     
 ]
