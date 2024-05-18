@@ -1,41 +1,30 @@
 from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.contrib.auth.models import User, Group
+from django.db.models.signals import post_save, post_migrate
 from django.dispatch import receiver
-from django.contrib.auth.models import AbstractUser,Group
+from django.contrib.auth import get_user_model
 
-# Create your models here.
-class TipoProducto(models.Model):
-    descripcion = models.CharField(max_length=100)
+# Model for Marca
+class Marca(models.Model):
+    cod_marca = models.CharField(max_length=100, primary_key=True, unique=True)
+    nombre_marca = models.CharField(max_length=60, unique=True)
 
     def __str__(self):
-        return self.descripcion
-
-class Producto(models.Model): 
-    nombre = models.CharField(max_length=100)
-    precio = models.IntegerField()
-    stock = models.IntegerField()
-    descripcion = models.CharField(max_length=200)
-    tipo = models.ForeignKey(TipoProducto, on_delete=models.CASCADE)
-    imagen = models.ImageField(null=True,blank=True)
-    vigente = models.BooleanField()
-
-def __str__(self):
-    return self.nombre 
+        return self.nombre_marca
 
 class Producto(models.Model):
-    nombre = models.CharField(max_length=50)
-    precio = models.IntegerField()
-    stock = models.PositiveIntegerField()
-    tipo = models.ForeignKey(TipoProducto, on_delete=models.CASCADE)
-    descripcion = models.CharField(max_length=250)
-    imagen = models.ImageField(null=True,blank=True)
+    id_producto = models.CharField(max_length=20, primary_key=True, unique=True, default=1)
+    nombre = models.CharField(max_length=100, null=False)
+    cod_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, db_column='cod_marca', default=1)  # Proporciona un valor predeterminado aquí
+    precio = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    stock = models.IntegerField(null=False)
+    imagen_url = models.URLField(max_length=1000, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.nombre
-    
+
     def vender(self, cantidad):
         if cantidad <= self.stock:
             self.stock -= cantidad
@@ -43,9 +32,10 @@ class Producto(models.Model):
         else:
             raise ValueError("No hay suficiente stock disponible")
 
+# Carro de Compras Models
 class CarroItem(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    cantidad = models.PositiveIntegerField(default = 1)
+    cantidad = models.PositiveIntegerField(default=1)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -55,7 +45,7 @@ class CarroItem(models.Model):
 
 class Compra(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    fecha = models.DateTimeField(auto_now_add = True)
+    fecha = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -71,7 +61,6 @@ class CompraItem(models.Model):
     def subtotal(self):
         return self.carro_item.producto.precio * self.carro_item.cantidad
 
-
 class CarroCompras(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     items = models.ManyToManyField(CarroItem)
@@ -84,12 +73,12 @@ class CarroCompras(models.Model):
         for item in self.items.all():
             total += item.subtotal()
         return total
-    
 
-class cliente(Group):
+# Default Groups
+class Cliente(Group):
     pass
 
-class vendedor(Group):
+class Vendedor(Group):
     pass
 
 @receiver(post_save, sender=User)
@@ -98,5 +87,12 @@ def assign_user_to_group(sender, instance, created, **kwargs):
         group = Group.objects.get(name='usuario')
         instance.groups.add(group)
 
+@receiver(post_migrate)
+def create_default_groups_and_superuser(sender, **kwargs):
+    default_groups = ['administrador', 'vendedor', 'usuario', 'bodeguero', 'contador']
+    for group_name in default_groups:
+        Group.objects.get_or_create(name=group_name)
 
-#seguimiento
+    User = get_user_model()
+    if not User.objects.filter(username='admin').exists():
+        User.objects.create_superuser(username='admin', email='admin@example.com', password='admin')

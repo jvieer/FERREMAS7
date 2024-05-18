@@ -37,26 +37,31 @@ def grupo_requerido(nombre_grupo):
 
 
 
-
+# ViewSets para los modelos
 class ProductoViewset(viewsets.ModelViewSet):
-	queryset = Producto.objects.all()
-	#queryset = Producto.objects.filter(tipo=1)
-	serializer_class = ProductoSerializer
+    queryset = Producto.objects.all()
+    serializer_class = ProductoSerializer
 
-class TipoProductoViewset(viewsets.ModelViewSet):
-	queryset = TipoProducto.objects.all()
-	#queryset = Producto.objects.filter(tipo=1)
-	serializer_class = TipoProductoSerializer
+class MarcaViewset(viewsets.ModelViewSet):
+    queryset = Marca.objects.all()
+    serializer_class = MarcaSerializer
 
 class CarroItemViewset(viewsets.ModelViewSet):
-	queryset = CarroItem.objects.all()
-	#queryset = Producto.objects.filter(tipo=1)
-	serializer_class = CarroItemSerializer
+    queryset = CarroItem.objects.all()
+    serializer_class = CarroItemSerializer
 
 class CarroComprasViewset(viewsets.ModelViewSet):
-	queryset = CarroCompras.objects.all()
-	#queryset = Producto.objects.filter(tipo=1)
-	serializer_class = CarroComprasSerializer
+    queryset = CarroCompras.objects.all()
+    serializer_class = CarroComprasSerializer
+
+class CompraViewset(viewsets.ModelViewSet):
+    queryset = Compra.objects.all()
+    serializer_class = CompraSerializer
+
+class CompraItemViewset(viewsets.ModelViewSet):
+    queryset = CompraItem.objects.all()
+    serializer_class = CompraItemSerializer
+
 	
     
 def indexapi(request):

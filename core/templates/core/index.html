@@ -57,17 +57,17 @@
                         <img class="card-img" src="{{ producto.imagen_url }}" alt="{{ producto.nombre }}">
                         <ul class="card-product__imgOverlay">
                             {% if user.is_superuser %}
-                            <li><button onclick="deleteProducto('{{ producto.codigo_producto }}')"><i class="ti-trash"></i></button></li>
-                            <li><button><a href="{% url 'update' producto.codigo_producto %}"><i class="ti-reload"></i></a></button></li>
+                            <li><button onclick="deleteProducto('{{ producto.id }}')"><i class="ti-trash"></i></button></li>
+                            <li><button><a href="{% url 'update' producto.id %}"><i class="ti-reload"></i></a></button></li>
                             <li><button><a href="{% url 'add' %}"><i class="ti-plus"></i></a></button></li>
                             {% else %}
-                            <li><a href="{% url 'singleproduct' producto.codigo_producto %}"><button><i class="ti-search"></i></button></a></li>
-                            <li><button><a href="{% url 'cartadd' producto.codigo_producto %}"><i class="ti-shopping-cart"></i></a></button></li>
+                            <li><a href="{% url 'singleproduct' producto.id %}"><button><i class="ti-search"></i></button></a></li>
+                            <li><button><a href="{% url 'cartadd' producto.id %}"><i class="ti-shopping-cart"></i></a></button></li>
                             {% endif %}
                         </ul>
                     </div>
                     <div class="card-body">
-                        <h4 class="card-product__title"><a href="{% url 'singleproduct' producto.codigo_producto %}">{{ producto.nombre }}</a></h4>
+                        <h4 class="card-product__title"><a href="{% url 'singleproduct' producto.id %}">{{ producto.nombre }}</a></h4>
                         {% if producto.precio <= 0 %}
                         <p style="color: red;">ERROR PRECIO</p>
                         {% else %}

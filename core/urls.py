@@ -4,9 +4,11 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register('productos',ProductoViewset)
-router.register('TipoProducto',TipoProductoViewset)
 router.register('CarroItem',CarroItemViewset)
 router.register('CarroCompras',CarroComprasViewset)
+router.register('marca', MarcaViewset)  # Registrar el ViewSet de Marca
+router.register('compra-item', CompraItemViewset)  # Registrar el ViewSet de CompraItem
+
 
 urlpatterns = [
     # API
