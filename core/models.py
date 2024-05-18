@@ -18,7 +18,7 @@ class Marca(models.Model):
 class Producto(models.Model):
     id_producto = models.CharField(max_length=20, primary_key=True, unique=True, default=1)
     nombre = models.CharField(max_length=100, null=False)
-    cod_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, db_column='cod_marca', default=1)  # Proporciona un valor predeterminado aquí
+    cod_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, db_column='cod_marca', default=1)
     precio = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     stock = models.IntegerField(null=False)
     imagen_url = models.URLField(max_length=1000, null=True, blank=True)
@@ -77,6 +77,40 @@ class CarroCompras(models.Model):
             total += item.subtotal()
         return total
 
+class Pedido(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('en_proceso', 'En proceso'),
+        ('completado', 'Completado'),
+        ('cancelado', 'Cancelado'),
+    ]
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha_pedido = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f'Pedido {self.id} - {self.usuario.username}'
+
+class Pago(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    fecha_pago = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(max_length=20, default='pendiente')
+    monto = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f'Pago {self.id} - {self.usuario.username}'
+
+class Entrega(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    fecha_entrega = models.DateTimeField(auto_now_add=True)
+    entregado_por = models.ForeignKey(User, on_delete=models.CASCADE, related_name='entregas_realizadas')
+    recibido_por = models.ForeignKey(User, on_delete=models.CASCADE, related_name='entregas_recibidas')
+
+    def __str__(self):
+        return f'Entrega {self.id} - Pedido {self.pedido.id}'
+
 # Default Groups
 class Cliente(Group):
     pass
@@ -99,5 +133,3 @@ def create_default_groups_and_superuser(sender, **kwargs):
     User = get_user_model()
     if not User.objects.filter(username='admin').exists():
         User.objects.create_superuser(username='admin', email='admin@example.com', password='admin')
-
-

@@ -23,6 +23,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 
+
 # Create your views here.
 
 #funcion generica que valida grupos
@@ -468,78 +469,44 @@ def asignar_roles(request):
     grupos = Group.objects.all()
     return render(request, 'core/asignar_roles.html', {'usuarios': usuarios, 'grupos': grupos})
 
-# Vistas de Administrador
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='administrador').exists())
-def informes_venta(request):
-    # Lógica para generar informes de venta mensual
-    return render(request, 'admin/informes_venta.html')
-
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='administrador').exists())
-def informes_desempeno(request):
-    # Lógica para generar informes de desempeño de la tienda
-    return render(request, 'admin/informes_desempeno.html')
-
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='administrador').exists())
-def estrategias_ventas(request):
-    # Lógica para desarrollar estrategias de ventas y promociones
-    return render(request, 'admin/estrategias_ventas.html')
-
-# Vistas de Vendedor/Encargado
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='vendedor').exists())
-def asesoramiento(request):
-    # Lógica para asesorar a los clientes en la selección de productos
-    return render(request, 'vendedor/asesoramiento.html')
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='vendedor').exists())
-def procesar_pedidos(request):
-    # Lógica para recibir y procesar pedidos
-    return render(request, 'vendedor/procesar_pedidos.html')
+def productos_bodega(request):
+    productos = Producto.objects.filter(stock__gt=0)
+    return render(request, 'core/productos_bodega.html', {'productos': productos})
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='vendedor').exists())
-def gestion_pagos(request):
-    # Lógica para gestionar los pagos y facturación
-    return render(request, 'vendedor/gestion_pagos.html')
-
-# Vistas de Bodeguero
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='bodeguero').exists())
-def organizar_inventario(request):
-    # Lógica para organizar y mantener el inventario
-    return render(request, 'bodeguero/organizar_inventario.html')
+def gestionar_pedidos(request):
+    pedidos = Pedido.objects.all()
+    return render(request, 'core/gestionar_pedidos.html', {'pedidos': pedidos})
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='bodeguero').exists())
-def preparar_entrega(request):
-    # Lógica para preparar y entregar los productos a los vendedores para su venta
-    return render(request, 'bodeguero/preparar_entrega.html')
+def ordenes_pedidos(request):
+    pedidos = Pedido.objects.all()
+    return render(request, 'core/ordenes_pedidos.html', {'pedidos': pedidos})
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='bodeguero').exists())
-def almacenamiento_materiales(request):
-    # Lógica para asegurar el adecuado almacenamiento de los materiales
-    return render(request, 'bodeguero/almacenamiento_materiales.html')
-
-# Vistas de Contador
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='contador').exists())
-def registro_transacciones(request):
-    # Lógica para llevar el registro de las transacciones de venta
-    return render(request, 'contador/registro_transacciones.html')
+def preparar_pedidos(request):
+    pedidos = Pedido.objects.filter(estado='pendiente')
+    return render(request, 'core/preparar_pedidos.html', {'pedidos': pedidos})
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='contador').exists())
-def control_finanzas(request):
-    # Lógica para controlar y registrar los pagos y las finanzas de la tienda
-    return render(request, 'contador/control_finanzas.html')
+def confirmar_pagos(request):
+    pagos = Pago.objects.filter(estado='pendiente')
+    return render(request, 'core/confirmar_pagos.html', {'pagos': pagos})
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='contador').exists())
-def elaborar_reportes(request):
-    # Lógica para elaborar balances y reportes financieros
-    return render(request, 'contador/elaborar_reportes.html')
+def registrar_entregas(request):
+    entregas = Entrega.objects.all()
+    return render(request, 'core/registrar_entregas.html', {'entregas': entregas})
+
+# Agregar un manejo de excepciones para mostrar un mensaje de error y redirigir al index
+def permission_denied_view(request):
+    messages.error(request, "No tienes permiso para acceder a esta página.")
+    return redirect('index')

@@ -90,28 +90,24 @@
 </section>
 <body>
   <div class="container">
-      <h2>Tus paginas como "{{ user.username }}"</h2>
+      <h2>Enlaces disponibles</h2>
       <div class="button-container">
-        {% if user.is_superuser %}
-              <a href="{% url 'informes_venta' %}" class="button">Informes de Venta</a>
-              <a href="{% url 'informes_desempeno' %}" class="button">Informes de Desempeño</a>
-              <a href="{% url 'estrategias_ventas' %}" class="button">Estrategias de Ventas</a>
-              <a href="{% url 'asignar_roles' %}"      class="button">Asignar Roles</a>
+          {% if roles.is_cliente %}
+              <a href="{% url 'catalogo_productos' %}" class="button">Catálogo de Productos</a>
+              <a href="{% url 'carrito_compras' %}" class="button">Carrito de Compras</a>
+              <a href="{% url 'opciones_pago' %}" class="button">Opciones de Pago</a>
           {% endif %}
           {% if roles.is_vendedor %}
-              <a href="{% url 'asesoramiento' %}" class="button">Asesoramiento</a>
-              <a href="{% url 'procesar_pedidos' %}" class="button">Procesar Pedidos</a>
-              <a href="{% url 'gestion_pagos' %}" class="button">Gestión de Pagos</a>
+              <a href="{% url 'productos_bodega' %}" class="button">Productos en Bodega</a>
+              <a href="{% url 'gestionar_pedidos' %}" class="button">Gestionar Pedidos</a>
           {% endif %}
           {% if roles.is_bodeguero %}
-              <a href="{% url 'organizar_inventario' %}" class="button">Organizar Inventario</a>
-              <a href="{% url 'preparar_entrega' %}" class="button">Preparar Entrega</a>
-              <a href="{% url 'almacenamiento_materiales' %}" class="button">Almacenamiento de Materiales</a>
+              <a href="{% url 'ordenes_pedidos' %}" class="button">Órdenes de Pedidos</a>
+              <a href="{% url 'preparar_pedidos' %}" class="button">Preparar Pedidos</a>
           {% endif %}
           {% if roles.is_contador %}
-              <a href="{% url 'registro_transacciones' %}" class="button">Registro de Transacciones</a>
-              <a href="{% url 'control_finanzas' %}" class="button">Control de Finanzas</a>
-              <a href="{% url 'elaborar_reportes' %}" class="button">Elaborar Reportes</a>
+              <a href="{% url 'confirmar_pagos' %}" class="button">Confirmar Pagos</a>
+              <a href="{% url 'registrar_entregas' %}" class="button">Registrar Entregas</a>
           {% endif %}
       </div>
   </div>
