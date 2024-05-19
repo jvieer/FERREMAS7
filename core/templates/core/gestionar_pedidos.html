@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+
+{% block contenido %}
+<div class="container">
+    <br>
+    <h1 style="color: #007bff; text-align: center;">Gestión de Pedidos</h1>
+    <br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Fecha de Pedido</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+            <tr>
+                <td>{{ pedido.id }}</td>
+                <td>{{ pedido.usuario.username }}</td>
+                <td>{{ pedido.fecha_pedido }}</td>
+                <td>{{ pedido.estado }}</td>
+                <td>{{ pedido.total }}</td>
+                <td>
+                    <form action="{% url 'aceptar_pedido' pedido.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Aceptar</button>
+                    </form>
+                    <form action="{% url 'rechazar_pedido' pedido.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Rechazar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

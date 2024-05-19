@@ -22,7 +22,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
-
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -544,3 +544,18 @@ def productos_bodega(request):
         error_message = f"Error al obtener datos de la API: {str(e)}"
         return render(request, 'core/productos_bodega.html', {'error_message': error_message})
     
+        def gestionar_pedidos(request):
+            pedidos = Pedido.objects.all()
+            return render(request, 'core/gestionar_pedidos.html', {'pedidos': pedidos})
+            
+def aceptar_pedido(request, pedido_id):
+    pedido = Pedido.objects.get(pk=pedido_id)
+    pedido.estado = 'completado'
+    pedido.save()
+    return redirect('gestionar_pedidos')
+
+def rechazar_pedido(request, pedido_id):
+    pedido = Pedido.objects.get(pk=pedido_id)
+    pedido.estado = 'cancelado'
+    pedido.save()
+    return redirect('gestionar_pedidos')
