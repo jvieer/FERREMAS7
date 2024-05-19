@@ -133,3 +133,11 @@ def create_default_groups_and_superuser(sender, **kwargs):
     User = get_user_model()
     if not User.objects.filter(username='admin').exists():
         User.objects.create_superuser(username='admin', email='admin@example.com', password='admin')
+
+class Orden(models.Model):
+    bodeguero = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    descripcion = models.TextField()
+
+    def __str__(self):
+        return f"Orden para {self.bodeguero.username} - {self.fecha_creacion}"

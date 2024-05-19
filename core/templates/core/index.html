@@ -100,6 +100,7 @@
           {% if roles.is_vendedor %}
               <a href="{% url 'productos_bodega' %}" class="button">Productos en Bodega</a>
               <a href="{% url 'gestionar_pedidos' %}" class="button">Gestionar Pedidos</a>
+              <a href="{% url 'ordenar_pedidos' %}" class="button">Ordenar Pedidos</a>
           {% endif %}
           {% if roles.is_bodeguero %}
               <a href="{% url 'ordenes_pedidos' %}" class="button">Órdenes de Pedidos</a>

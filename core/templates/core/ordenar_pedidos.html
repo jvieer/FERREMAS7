@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+
+{% block contenido %}
+<div class="container">
+    <h1>Ordenar Pedidos</h1>
+    <form method="post">
+        {% csrf_token %}
+        <!-- Campo de selección para elegir el bodeguero -->
+        <label for="bodeguero">Seleccione un bodeguero:</label>
+        <select name="bodeguero" id="bodeguero">
+            {% for usuario in usuarios_bodegueros %}
+            <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <!-- Campo de entrada de texto para escribir la orden -->
+        <label for="descripcion">Escriba la orden:</label>
+        <input type="text" id="descripcion" name="descripcion">
+        <br><br>
+        <button type="submit">Ordenar Pedido</button>
+    </form>
+    <!-- Tabla para mostrar el historial de órdenes -->
+    <h2>Historial de Órdenes</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID de Orden</th>
+                <th>Bodeguero</th>
+                <th>Descripción de la Orden</th>
+                <th>Fecha de Creación</th>
+                <!-- Puedes agregar más columnas según tus necesidades -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for orden in historial_ordenes %}
+            <tr>
+                <td>{{ orden.id }}</td>
+                <td>{{ orden.bodeguero }}</td>
+                <td>{{ orden.descripcion }}</td>
+                <td>{{ orden.fecha_creacion }}</td>
+                <!-- Puedes agregar más celdas según tus necesidades -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

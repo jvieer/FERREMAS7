@@ -62,10 +62,12 @@ urlpatterns = [
     path('gestionar_pedidos/', gestionar_pedidos, name='gestionar_pedidos'),
     path('ordenes_pedidos/', ordenes_pedidos, name='ordenes_pedidos'),
     path('preparar_pedidos/', preparar_pedidos, name='preparar_pedidos'),
+    path('ordenar_pedidos/', ordenar_pedidos, name='ordenar_pedidos'),
     path('confirmar_pagos/', confirmar_pagos, name='confirmar_pagos'),
     path('registrar_entregas/', registrar_entregas, name='registrar_entregas'),
 
     path('aceptar-pedido/<int:pedido_id>/', aceptar_pedido, name='aceptar_pedido'),
     path('rechazar-pedido/<int:pedido_id>/', rechazar_pedido, name='rechazar_pedido'),
+    path('ordenar_pedidos/', ordenar_pedidos, name='ordenar_pedidos'),
 ]
 

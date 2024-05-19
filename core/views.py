@@ -496,6 +496,12 @@ def gestionar_pedidos(request):
     return render(request, 'core/gestionar_pedidos.html', {'pedidos': pedidos})
 
 @login_required
+@user_passes_test(lambda u: u.groups.filter(name='vendedor').exists())
+def ordenar_pedidos(request):
+    pedidos = Pedido.objects.all()
+    return render(request, 'core/ordenar_pedidos.html', {'pedidos': pedidos})
+
+@login_required
 @user_passes_test(lambda u: u.groups.filter(name='bodeguero').exists())
 def ordenes_pedidos(request):
     pedidos = Pedido.objects.all()
@@ -559,3 +565,27 @@ def rechazar_pedido(request, pedido_id):
     pedido.estado = 'cancelado'
     pedido.save()
     return redirect('gestionar_pedidos')
+
+def ordenar_pedidos(request):
+    if request.method == 'POST':
+        bodeguero_id = request.POST.get('bodeguero')
+        descripcion = request.POST.get('descripcion')  # Obtener la descripción de la orden del formulario
+
+        try:
+            bodeguero = User.objects.get(pk=bodeguero_id)  # Obtiene el objeto del bodeguero
+            # Procesa la orden y guárdala en la base de datos con la descripción proporcionada
+            orden = Orden(bodeguero=bodeguero, descripcion=descripcion)
+            orden.save()
+            # Agrega un mensaje para confirmar que se ha ordenado correctamente
+            messages.success(request, 'Se ha ordenado el pedido correctamente.')
+        except User.DoesNotExist:
+            # Maneja el caso donde no se encuentra al usuario
+            messages.error(request, 'El bodeguero seleccionado no existe.')
+        
+        # Redirige a la misma página para evitar reenvíos de formulario
+        return redirect('ordenar_pedidos')
+    else:
+        # Si la solicitud no es POST, simplemente renderiza la página con la lista de bodegueros
+        usuarios_bodegueros = User.objects.filter(groups__name='bodeguero')  # Filtra los usuarios por grupo 'bodeguero'
+        historial_ordenes = Orden.objects.all()  # Puedes filtrar el historial según tus necesidades
+        return render(request, 'core/ordenar_pedidos.html', {'usuarios_bodegueros': usuarios_bodegueros, 'historial_ordenes': historial_ordenes})
