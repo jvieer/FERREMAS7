@@ -41,7 +41,7 @@ urlpatterns = [
     path('asignar-roles/', asignar_roles, name='asignar_roles'),
     path('password_reset/', password_reset, name='password_reset'),
     #path('remover_grupo/<int:usuario_id>/<int:grupo_id>/', remover_grupo, name='remover_grupo'),
-
+    
 
 
 

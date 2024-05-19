@@ -441,22 +441,24 @@ def subsForm(request):
 @permission_required('auth.change_user')
 def asignar_roles(request):
     if request.method == 'POST':
-        # Obtener los datos del formulario
         usuario_id = request.POST.get('usuario_id')
         nuevo_rol = request.POST.get('nuevo_rol')
+        accion = request.POST.get('accion')
 
-        # Obtener el usuario y actualizar su rol
         try:
             usuario = User.objects.get(pk=usuario_id)
-            usuario_nombre = usuario.username  # Para mensajes de depuración
+            usuario_nombre = usuario.username
 
-            if nuevo_rol:
+            if accion == 'agregar' and nuevo_rol:
                 grupo = Group.objects.get(name=nuevo_rol)
-                usuario.groups.clear()  # Limpiar roles anteriores
                 usuario.groups.add(grupo)
                 messages.success(request, f"Se asignó el rol '{nuevo_rol}' al usuario '{usuario_nombre}' correctamente.")
+            elif accion == 'quitar' and nuevo_rol:
+                grupo = Group.objects.get(name=nuevo_rol)
+                usuario.groups.remove(grupo)
+                messages.success(request, f"Se quitó el rol '{nuevo_rol}' al usuario '{usuario_nombre}' correctamente.")
             else:
-                messages.warning(request, f"No se proporcionó un nuevo rol para el usuario '{usuario_nombre}'.")
+                messages.warning(request, "Acción no válida o rol no especificado.")
         except User.DoesNotExist:
             messages.error(request, f"El usuario con ID '{usuario_id}' no existe.")
         except Group.DoesNotExist:
@@ -464,10 +466,21 @@ def asignar_roles(request):
 
         return redirect('asignar_roles')
 
-    # Obtener todos los usuarios y grupos
     usuarios = User.objects.all()
     grupos = Group.objects.all()
-    return render(request, 'core/asignar_roles.html', {'usuarios': usuarios, 'grupos': grupos})
+    
+    # Obtener los roles del usuario seleccionado
+    roles_usuario = None
+    usuario_id = request.GET.get('usuario_id')  # Obtener el usuario seleccionado del query string
+    if usuario_id:
+        try:
+            usuario_seleccionado = User.objects.get(pk=usuario_id)
+            roles_usuario = usuario_seleccionado.groups.values_list('name', flat=True)
+        except User.DoesNotExist:
+            pass
+
+    return render(request, 'core/asignar_roles.html', {'usuarios': usuarios, 'grupos': grupos, 'roles_usuario': roles_usuario})
+
 
 
 @login_required
@@ -510,3 +523,24 @@ def registrar_entregas(request):
 def permission_denied_view(request):
     messages.error(request, "No tienes permiso para acceder a esta página.")
     return redirect('index')
+
+def productos_bodega(request):
+    try:
+        # Obtener datos de la API
+        response = requests.get('http://127.0.0.1:5000/productos')
+        response.raise_for_status()  # Lanza una excepción si la solicitud no es exitosa
+        productos_api = response.json()
+
+        # Paginar los productos
+        paginator = Paginator(productos_api, 8)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+
+        # Renderizar la plantilla con los datos paginados
+        return render(request, 'core/productos_bodega.html', {'page_obj': page_obj})
+
+    except RequestException as e:
+        # Manejar cualquier error de solicitud de la API
+        error_message = f"Error al obtener datos de la API: {str(e)}"
+        return render(request, 'core/productos_bodega.html', {'error_message': error_message})
+    
