@@ -69,5 +69,6 @@ urlpatterns = [
     path('aceptar-pedido/<int:pedido_id>/', aceptar_pedido, name='aceptar_pedido'),
     path('rechazar-pedido/<int:pedido_id>/', rechazar_pedido, name='rechazar_pedido'),
     path('ordenar_pedidos/', ordenar_pedidos, name='ordenar_pedidos'),
+    path('ordenes_pedidos/', ordenes_pedidos, name='ordenes_pedidos'),
 ]
 

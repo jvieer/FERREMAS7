@@ -589,3 +589,21 @@ def ordenar_pedidos(request):
         usuarios_bodegueros = User.objects.filter(groups__name='bodeguero')  # Filtra los usuarios por grupo 'bodeguero'
         historial_ordenes = Orden.objects.all()  # Puedes filtrar el historial según tus necesidades
         return render(request, 'core/ordenar_pedidos.html', {'usuarios_bodegueros': usuarios_bodegueros, 'historial_ordenes': historial_ordenes})
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='bodeguero').exists())
+def ordenes_pedidos(request):
+    if request.method == 'POST':
+        vendedor_id = request.POST.get('vendedor')
+        mensaje = request.POST.get('mensaje')
+        try:
+            vendedor = User.objects.get(pk=vendedor_id)
+            orden = OrdenB(vendedor=vendedor, descripcion=mensaje)
+            orden.save()
+            messages.success(request, 'Se ha enviado la orden al vendedor correctamente.')
+        except User.DoesNotExist:
+            messages.error(request, 'El vendedor seleccionado no existe.')
+        return redirect('ordenes_pedidos')
+    else:
+        vendedores = User.objects.filter(groups__name='vendedor')
+        historial_ordenes = OrdenB.objects.all()
+        return render(request, 'core/ordenes_pedidos.html', {'vendedores': vendedores, 'historial_ordenes': historial_ordenes})

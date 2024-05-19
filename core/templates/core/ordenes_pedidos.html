@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+
+{% block contenido %}
+<div class="container">
+    <h1>Enviar Órdenes a Vendedores</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="vendedor">Seleccione un vendedor:</label>
+        <select name="vendedor" id="vendedor">
+            {% for usuario in vendedores %}
+            <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="mensaje">Escriba el mensaje:</label>
+        <textarea id="mensaje" name="mensaje" rows="4" cols="50"></textarea>
+        <br><br>
+        <button type="submit">Enviar Orden</button>
+    </form>
+
+    <h2>Historial de Órdenes</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID de Orden</th>
+                <th>Vendedor</th>
+                <th>Descripción de la Orden</th>
+                <th>Fecha de Creación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for orden in historial_ordenes %}
+            <tr>
+                <td>{{ orden.id }}</td>
+                <td>{{ orden.vendedor.username }}</td>
+                <td>{{ orden.descripcion }}</td>
+                <td>{{ orden.fecha_creacion }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

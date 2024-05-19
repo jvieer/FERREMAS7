@@ -141,3 +141,11 @@ class Orden(models.Model):
 
     def __str__(self):
         return f"Orden para {self.bodeguero.username} - {self.fecha_creacion}"
+
+class OrdenB(models.Model):
+    vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
+    descripcion = models.CharField(max_length=255)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Orden {self.id} - Vendedor: {self.vendedor.username}'  
