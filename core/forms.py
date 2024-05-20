@@ -10,11 +10,14 @@ from django.core.exceptions import ValidationError
 
 
 
-class ProductoForm(ModelForm):
-
-    class Meta:
-        model = Producto
-        fields = '__all__'
+class ProductoForm(forms.Form):
+    id = forms.CharField(max_length=20, label="id")  # Usado como 'id' en la API
+    nombre = forms.CharField(max_length=100)
+    cod_marca = forms.CharField(max_length=100)
+    nombre_marca = forms.CharField(max_length=150)
+    precio = forms.IntegerField()
+    stock = forms.IntegerField()
+    imagen_url = forms.CharField()
 
 
 

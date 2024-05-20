@@ -24,8 +24,40 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
+API_URL = "http://127.0.0.1:5000"
+
 # Create your views here.
 
+@permission_required('app.add')
+
+def add(request):
+    data = {
+        'form': ProductoForm()
+    }
+    if request.method == 'POST':
+        formulario = ProductoForm(request.POST, files=request.FILES)
+        if formulario.is_valid():
+            # Extraer datos del formulario
+            producto_data = {
+                'id': formulario.cleaned_data['id'],  # Cambiado a 'id'
+                'nombre': formulario.cleaned_data['nombre'],
+                'cod_marca': formulario.cleaned_data['cod_marca'],
+                'nombre_marca': formulario.cleaned_data['nombre_marca'],
+                'precio': formulario.cleaned_data['precio'],
+                'stock': formulario.cleaned_data['stock'],
+                'imagen_url': formulario.cleaned_data.get('imagen_url')  # Si tienes campo para la URL de la imagen
+            }
+
+            # Enviar datos a la API
+            response = requests.post(f"{API_URL}/productos", json=producto_data)
+
+            if response.status_code == 200:
+                messages.success(request, "Producto almacenado correctamente")
+                return redirect('index')  # Redirigir a la página de productos o a donde prefieras
+            else:
+                messages.error(request, f"Error al almacenar el producto: {response.text}")
+
+    return render(request, 'core/add-product.html', data)
 #funcion generica que valida grupos
 #USO : @grupo_requerido('cliente')
 def grupo_requerido(nombre_grupo):
@@ -253,19 +285,8 @@ def trackingorder(request):
 
 
 #crud
-@permission_required('app.add')
-def add(request):
-	data = {
-		'form': ProductoForm()
-	}
-	if request.method == 'POST':
-		formulario = ProductoForm(request.POST, files=request.FILES)
-		if formulario.is_valid():
-			formulario.save()
-			#data['msj'] = "Producto almacenado correctamente"
-			messages.success(request, "Producto almacenado correctamente")
 
-	return render(request, 'core/add-product.html', data)
+    
 @permission_required('app.update/<id>/')
 def update(request,id):
 	producto = Producto.objects.get(id=id)
