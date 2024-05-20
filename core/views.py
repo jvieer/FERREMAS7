@@ -90,6 +90,28 @@ def update(request, id):
         # Manejar cualquier error que ocurra durante el proceso
         data = {'error': str(e)}
         return render(request, 'core/update-product.html', data)
+
+
+def delete(request, id):
+    try:
+        # Realizar la solicitud DELETE a la API para eliminar el producto
+        url = f"http://127.0.0.1:5000/productos/{id}"
+        response = requests.delete(url)
+        
+        if response.status_code == 200:
+            # Si la eliminación en la API fue exitosa, redirigir al usuario al índice con un mensaje de éxito
+            success_message = '¡El producto se ha eliminado correctamente!'
+            return redirect('index')
+        else:
+            # Manejar el caso en que la eliminación en la API falle
+            data = {'error': 'No se pudo eliminar el producto en la API'}
+            return render(request, 'core/index.html', data)
+    except Exception as e:
+        # Manejar cualquier error que ocurra durante el proceso
+        data = {'error': str(e)}
+        return render(request, 'core/index.html', data)
+
+
 #funcion generica que valida grupos
 #USO : @grupo_requerido('cliente')
 def grupo_requerido(nombre_grupo):
@@ -320,12 +342,7 @@ def trackingorder(request):
 
     
 
-@permission_required('app.delete/<id>/')
-def delete(request,id):
-    producto = Producto.objects.get(id=id); # OBTENEMOS UN PRODUCTO
-    producto.delete()
 
-    return redirect(to="index")
 
 
 def registro(request):
