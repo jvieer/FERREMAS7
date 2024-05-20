@@ -4,18 +4,18 @@
 {% block contenido %}
 
 <div class="container">
-    <div class="row">
-        <div class="col-12 m-5">
-            <form action="" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                <table>
-                    {{ form | crispy }}
-                </table>
-                <input type="submit" class="btn btn-success" value="Actualizar">
-            </form>
-        </div>
-    </div>
+  <div class="row">
+      <div class="col-12 m-5">
+        <form action="{% url 'update' id=id %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <table>
+              {{ form | crispy }}
+          </table>
+          <input type="submit" class="btn btn-success" value="Actualizar">
+      </form>
+      </div>
+  </div>
 </div>
 {% endblock %}
 {% block js %}
@@ -39,5 +39,4 @@ Swal.fire({
 </script>
 {% endfor %} 
 {% endif %}
-
 {% endblock %}

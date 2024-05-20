@@ -58,7 +58,7 @@
                         <ul class="card-product__imgOverlay">
                             {% if user.is_superuser %}
                             <li><button onclick="deleteProducto('{{ producto.id }}')"><i class="ti-trash"></i></button></li>
-                            <li><button><a href="{% url 'update' producto.id %}"><i class="ti-reload"></i></a></button></li>
+                            <li><button><a href="{% url 'update' id=producto.id %}"><i class="ti-reload"></i></a></button></li>
                             <li><button><a href="{% url 'add' %}"><i class="ti-plus"></i></a></button></li>
                             {% else %}
                             <li><a href="{% url 'singleproduct' producto.id %}"><button><i class="ti-search"></i></button></a></li>

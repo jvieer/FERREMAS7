@@ -58,6 +58,38 @@ def add(request):
                 messages.error(request, f"Error al almacenar el producto: {response.text}")
 
     return render(request, 'core/add-product.html', data)
+
+def update(request, id):
+    try:
+        if request.method == 'POST':
+            form = ProductoForm(request.POST)  # Obtener los datos del formulario enviado por el usuario
+            if form.is_valid():
+                # Si el formulario es válido, enviar los datos actualizados a la API para actualizar el producto
+                url = f"http://127.0.0.1:5000/productos/{id}"
+                response = requests.put(url, json=form.cleaned_data)
+                if response.status_code == 200:
+                    messages.success(request, '¡El producto se ha actualizado correctamente!')
+                    # Si la actualización en la API fue exitosa, redirigir al usuario a la página de detalles del producto
+                    return redirect('index')
+                else:
+                    # Manejar el caso en que la actualización en la API falle
+                    data = {'error': 'No se pudo actualizar el producto en la API'}
+                    return render(request, 'core/update-product.html', data)
+        else:
+            # Si la solicitud no es POST, obtener los detalles del producto de la API y mostrar el formulario
+            url = f"http://127.0.0.1:5000/productos/{id}"
+            response = requests.get(url)
+            if response.status_code == 200:
+                producto = response.json()
+                data = {'form': ProductoForm(initial=producto), 'id': id}
+                return render(request, 'core/update-product.html', data)
+            else:
+                data = {'error': 'No se pudo obtener el producto de la API'}
+                return render(request, 'core/update-product.html', data)
+    except Exception as e:
+        # Manejar cualquier error que ocurra durante el proceso
+        data = {'error': str(e)}
+        return render(request, 'core/update-product.html', data)
 #funcion generica que valida grupos
 #USO : @grupo_requerido('cliente')
 def grupo_requerido(nombre_grupo):
@@ -287,21 +319,7 @@ def trackingorder(request):
 #crud
 
     
-@permission_required('app.update/<id>/')
-def update(request,id):
-	producto = Producto.objects.get(id=id)
-	data = {
-		'form': ProductoForm(instance=producto)
-	}
-	if request.method == 'POST':
-		formulario = ProductoForm(data=request.POST, instance=producto)
-		if formulario.is_valid():
-			formulario.save()
-			#data['msj'] = "Producto actualizado correctamente"
-			messages.success(request, "Producto actualizado correctamente")
-			data['form'] = formulario
 
-	return render(request, 'core/update-product.html', data)
 @permission_required('app.delete/<id>/')
 def delete(request,id):
     producto = Producto.objects.get(id=id); # OBTENEMOS UN PRODUCTO
