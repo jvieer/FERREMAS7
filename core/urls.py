@@ -50,9 +50,9 @@ urlpatterns = [
     path('update/<id>/', update,name = "update"),
     path('delete/<id>/', delete, name= "delete"),
     path('cartadd/<id>/', cartadd, name="cartadd"),
+    path('cart/cartdel/<id>/', cartdel, name="cartdel"),
     path('cart/cartadd/<id>',cartadd, name="cartaddd"),
-    path('cart/cartdelete/<str:id>', cartdelete, name="cartdelete"),
-    path('cart/cartdel/<str:id>/', cartdel, name="cartdel"),
+    path('cart/cartdelete/<id>',cartdelete, name="cartdelete"),
     path('add_compra/', add_compra, name="add_compra"),
     path('suscribir/<id>/', agregar_suscriptor, name="suscribir"),
     

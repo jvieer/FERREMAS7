@@ -449,23 +449,50 @@ def order_history(request):
 
 
 
+import requests
+from django.http import HttpResponse
+from .models import CarroCompras
+
+API_URL = "http://127.0.0.1:5000"
+
 def cartdel(request, id):
-    producto = Producto.objects.get(id=id)
-    carro_compras = CarroCompras.objects.get(usuario=request.user)
-    carro_item = carro_compras.items.get(producto=producto)
+    # Realizamos una solicitud a tu API para obtener la información del producto
+    response = requests.get(f"{API_URL}/productos/{id}")
+    
+    if response.status_code == 200:
+        producto_data = response.json()
+        try:
+            # Intentamos obtener el carrito de compras del usuario actual
+            carro_compras = CarroCompras.objects.get(usuario=request.user)
+            # Buscamos el item en el carrito basado en el ID del producto de la API
+            carro_item = carro_compras.items.get(producto_id_api=id)
+            
+            # Verificamos si hay más de un producto en el carrito
+            if carro_item.cantidad > 1:
+                # Si hay más de un producto, simplemente disminuimos la cantidad
+                carro_item.cantidad -= 1
+                carro_item.save()
+            else:
+                # Si hay solo un producto, lo eliminamos del carrito
+                carro_compras.items.remove(carro_item)
+                carro_item.delete()
 
-    if carro_item.cantidad > 1:
-        carro_item.cantidad -= 1
-        carro_item.save()
+                # Incrementar el stock del producto cuando se elimina del carrito
+                # (suponiendo que tengas un endpoint en tu API para realizar esta acción)
+                # Esto es opcional y depende de cómo manejes tu API
+                requests.post(f"{API_URL}/incrementar_stock/{id}")
+
+        except CarroCompras.DoesNotExist:
+            # Manejar el caso en que no se encuentre el carrito de compras del usuario actual
+            # Esto puede suceder si el usuario no ha agregado ningún producto al carrito antes
+            pass
+
+        return redirect('cart')
     else:
-        carro_compras.items.remove(carro_item)
-        carro_item.delete()
+        # Manejar el caso en que no se pueda obtener la información del producto desde la API
+        # Por ejemplo, mostrar un mensaje de error al usuario
+        return HttpResponse("Error al obtener la información del producto de la API", status=response.status_code)
 
-        # Incrementar el stock del producto cuando se elimina el elemento del carrito
-        producto.stock += 1
-        producto.save()
-
-    return redirect('cart')
 
 def cartdelete(request,id):
     producto = Producto.objects.get(id=id)
