@@ -29,11 +29,10 @@ class ProductoAdmin(admin.ModelAdmin):
 
 # CarroItem Admin
 class CarroItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'producto', 'cantidad', 'usuario', 'created_at', 'updated_at']
-    search_fields = ['producto__nombre']
+    list_display = ['id', 'producto_id_api', 'cantidad', 'usuario', 'created_at', 'updated_at']  # Ajustado para usar producto_id_api en lugar de producto
+    search_fields = ['producto_id_api']  # Actualizado para buscar por producto_id_api
     list_per_page = 5
-    list_filter = ['producto', 'usuario']
-
+    list_filter = ['usuario']  # Ya que producto_id_api no se puede filtrar directamente
 # Compra Admin
 class CompraAdmin(admin.ModelAdmin):
     list_display = ['id', 'usuario', 'fecha', 'created_at', 'updated_at']

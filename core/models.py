@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseForbidden
 from django.shortcuts import render
 
+
+API_URL = "http://127.0.0.1:5000"
 # Model for Marca
 class Marca(models.Model):
     cod_marca = models.CharField(max_length=100, primary_key=True, unique=True)
@@ -37,14 +39,23 @@ class Producto(models.Model):
 
 # Carro de Compras Models
 class CarroItem(models.Model):
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    producto_id_api = models.CharField(max_length=100)  # Cambiado el campo para almacenar el ID del producto de la API
     cantidad = models.PositiveIntegerField(default=1)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def subtotal(self):
-        return self.producto.precio * self.cantidad
+        # Puedes obtener el precio del producto haciendo una solicitud a la API
+        # Aquí asumo que la API devuelve el precio del producto junto con otros datos
+        response = requests.get(f"{API_URL}/productos/{self.producto_id_api}")
+        if response.status_code == 200:
+            producto_data = response.json()
+            precio = producto_data.get('precio')
+            if precio is not None:
+                return precio * self.cantidad
+        # En caso de que no se pueda obtener el precio del producto, retorna 0
+        return 0
 
 class Compra(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)

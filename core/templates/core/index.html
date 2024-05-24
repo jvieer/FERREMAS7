@@ -94,7 +94,7 @@
       <div class="button-container">
           {% if roles.is_cliente %}
               <a href="{% url 'catalogo_productos' %}" class="button">Catálogo de Productos</a>
-              <a href="{% url 'carrito_compras' %}" class="button">Carrito de Compras</a>
+              <a href="{% url 'cart' %}" class="button">Carrito de Compras</a>
               <a href="{% url 'opciones_pago' %}" class="button">Opciones de Pago</a>
           {% endif %}
           {% if roles.is_vendedor %}

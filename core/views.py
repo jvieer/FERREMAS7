@@ -24,9 +24,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
-API_URL = "http://127.0.0.1:5000"
+#LOGICAS API
 
-# Create your views here.
+API_URL = "http://127.0.0.1:5000"
 
 @permission_required('app.add')
 
@@ -91,7 +91,6 @@ def update(request, id):
         data = {'error': str(e)}
         return render(request, 'core/update-product.html', data)
 
-
 def delete(request, id):
     try:
         # Realizar la solicitud DELETE a la API para eliminar el producto
@@ -111,9 +110,70 @@ def delete(request, id):
         data = {'error': str(e)}
         return render(request, 'core/index.html', data)
 
+def cart(request):
+    try:
+        carro_compras = CarroCompras.objects.get(usuario=request.user)
+        items = carro_compras.items.all()
+    except CarroCompras.DoesNotExist:
+        items = []
+    
+    total = 0
+    items_data = []
 
-#funcion generica que valida grupos
-#USO : @grupo_requerido('cliente')
+    for item in items:
+        response = requests.get(f"{API_URL}/productos/{item.producto_id_api}")
+        if response.status_code == 200:
+            producto = response.json()
+            subtotal = producto['precio'] * item.cantidad
+            total += subtotal
+            items_data.append({
+                'producto': producto,
+                'cantidad': item.cantidad,
+                'subtotal': subtotal,
+                'id': item.producto_id_api
+            })
+
+    respuesta = requests.get('https://mindicador.cl/api/dolar').json()
+    valor_usd = respuesta['serie'][0]['valor']
+    valor_total = total / valor_usd
+
+    data = {
+        'total': round(valor_total, 2),
+        'items': items_data,
+    }
+
+    return render(request, 'core/cart.html', data)
+
+def cartadd(request, id):
+    # Obtener el producto de la API en lugar de la base de datos local
+    response = requests.get(f"{API_URL}/productos/{id}")
+    if response.status_code != 200:
+        # Manejar el caso donde no se puede obtener el producto de la API
+        # Puedes redirigir a una página de error o mostrar un mensaje al usuario
+        return redirect('index')
+
+    producto = response.json()
+
+    # Crear o obtener el carrito de compras del usuario
+    carro_compras, created = CarroCompras.objects.get_or_create(usuario=request.user)
+
+    # Crear o actualizar el elemento del carrito para el producto
+    carro_item, item_created = CarroItem.objects.get_or_create(producto_id_api=producto['id'], usuario=request.user)
+
+    if not item_created:
+        carro_item.cantidad += 1
+        carro_item.save()
+
+    # Agregar el elemento del carrito al carrito de compras
+    carro_compras.items.add(carro_item)
+    carro_compras.save()
+
+    # No necesitas actualizar el stock del producto aquí, ya que eso se manejará en la API
+
+    return redirect('index')
+
+
+
 def grupo_requerido(nombre_grupo):
 	def decorator(view_func):
 		@user_passes_test(lambda user: user.groups.filter(name=nombre_grupo).exists())
@@ -229,28 +289,7 @@ def blog(request):
 
    #eturn render(request,'core/cart.html',data)
   
-def cart(request):
-    carro_compras = CarroCompras.objects.get(usuario=request.user)
-    items = carro_compras.items.all()
-    total = carro_compras.total()
-    respuesta = requests.get('https://mindicador.cl/api/dolar').json()
-    valor_usd = respuesta['serie'][0]['valor']
-    valor_carrito = 'total' # SE SUPONE QUE ES EL TOTAL DEL CARRITO
-    valor_total = total / valor_usd
 
-    for item in items:
-        producto = item.producto
-
-        # Actualizar el stock del producto restando 1 por cada elemento del carrito
-        producto.stock -= 1
-        producto.save()
-
-    data = {
-        'total': round(valor_total, 2),
-        'items': items,
-    }
-
-    return render(request, 'core/cart.html', data)
 
 def cartUser(request):
 	return render(request, 'core/cartUser.html')
@@ -408,23 +447,7 @@ def order_history(request):
     return render(request, 'core/order_history.html', {'compras': compras})
 
 
-def cartadd(request, id):
-    producto = Producto.objects.get(id=id)
-    carro_compras, created = CarroCompras.objects.get_or_create(usuario=request.user)
-    carro_item, item_created = CarroItem.objects.get_or_create(producto=producto, usuario=request.user)
 
-    if not item_created:
-        carro_item.cantidad += 1
-        carro_item.save()
-
-    carro_compras.items.add(carro_item)
-    carro_compras.save()
-
-    # Descuentar el stock del producto cuando se agrega al carrito
-    producto.stock -= 1
-    producto.save()
-
-    return redirect('cart')
 
 def cartdel(request, id):
     producto = Producto.objects.get(id=id)
