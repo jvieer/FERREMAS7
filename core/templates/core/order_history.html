@@ -1,18 +1,28 @@
 {% extends 'core/base.html' %}
 {% block contenido %}
-    <h2>Historial de Pedidos</h2>
-    {% if compras %}
-        <ul>
-            {% for compra in compras %}
-                <li>
-                    <h3>Número de Pedido: {{ compra.id }}</h3>
-                    <p>Total: ${{ compra.total }}</p>
-                    <p>Fecha: {{ compra.fecha }}</p>
-                    <!-- Aquí puedes mostrar más detalles si lo deseas -->
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No hay pedidos realizados.</p>
-    {% endif %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="mb-4">Historial de Pedidos</h2>
+            {% if compras %}
+                <div class="list-group">
+                    {% for compra in compras %}
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Número de Pedido: {{ compra.id }}</h5>
+                                <small>Fecha: {{ compra.fecha }}</small>
+                            </div>
+                            <p class="mb-1">Total: ${{ compra.total }}</p>
+                            <!-- Aquí puedes mostrar más detalles si lo deseas -->
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    No hay pedidos realizados.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

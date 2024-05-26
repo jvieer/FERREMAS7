@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseForbidden
 from django.shortcuts import render
-
+import requests
 
 API_URL = "http://127.0.0.1:5000"
 # Model for Marca
@@ -73,7 +73,15 @@ class CompraItem(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def subtotal(self):
-        return self.carro_item.producto.precio * self.carro_item.cantidad
+        # Obtener el precio del producto a través de la API
+        response = requests.get(f"{API_URL}/productos/{self.carro_item.producto_id_api}")
+        if response.status_code == 200:
+            producto_data = response.json()
+            precio = producto_data.get('precio')
+            if precio is not None:
+                return precio * self.carro_item.cantidad
+        # En caso de que no se pueda obtener el precio del producto, retorna 0
+        return 0
 
 class CarroCompras(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -160,3 +168,15 @@ class OrdenB(models.Model):
 
     def __str__(self):
         return f'Orden {self.id} - Vendedor: {self.vendedor.username}'  
+
+class HistorialCompras(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha_compra = models.DateTimeField(auto_now_add=True)
+    productos = models.ManyToManyField(Producto, through='DetalleCompra')
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+
+class DetalleCompra(models.Model):
+    historial_compra = models.ForeignKey(HistorialCompras, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)

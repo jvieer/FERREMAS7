@@ -21,11 +21,11 @@
           <h3 style="font-size: 8em; margin: 0 auto; color: rgb(255, 255, 255);">FERREMAS</h3>
           <h4></h4>
           <!-- Formulario de búsqueda mejorado con bordes redondeados -->
-          <form action="/buscar" method="GET">
+         <!-- <form action="/buscar" method="GET">
             <div class="input-group mb-3 rounded-pill">
               <input type="text" class="form-control rounded-pill" name="q" placeholder="Buscar productos..." required>
               <div class="input-group-append">
-                <button class="btn btn-outline-secondary rounded-pill" type="submit">Buscar</button>
+                <button class="btn btn-outline-secondary rounded-pill" type="submit">Buscar</button> -->
               </div>
             </div>
           </form>
@@ -38,6 +38,11 @@
 
 <section class="section-margin calc-60px">
   <div class="container">
+    {% if request.GET.compra_exitosa %}
+<div class="alert alert-success" role="alert">
+    La compra fue realizada con éxito. Para ver tus compras, haz click <a href="{% url 'order_history' %}">aquí</a>.
+</div>
+{% endif %}
     {% if user.is_superuser %}
     <div class="section-intro pb-60px">
       <h2><span class="section-intro__style">Bienvenido "{{ user.username }}"</span></h2>
@@ -90,23 +95,26 @@
 </section>
 <body>
   <div class="container">
-      <h2>Enlaces disponibles</h2>
       <div class="button-container">
           {% if roles.is_cliente %}
+          <h2>Enlaces disponibles</h2>
               <a href="{% url 'catalogo_productos' %}" class="button">Catálogo de Productos</a>
               <a href="{% url 'cart' %}" class="button">Carrito de Compras</a>
               <a href="{% url 'opciones_pago' %}" class="button">Opciones de Pago</a>
           {% endif %}
           {% if roles.is_vendedor %}
+          <h2>Enlaces disponibles</h2>
               <a href="{% url 'productos_bodega' %}" class="button">Productos en Bodega</a>
               <a href="{% url 'gestionar_pedidos' %}" class="button">Gestionar Pedidos</a>
               <a href="{% url 'ordenar_pedidos' %}" class="button">Ordenar Pedidos</a>
           {% endif %}
           {% if roles.is_bodeguero %}
+          <h2>Enlaces disponibles</h2>
               <a href="{% url 'ordenes_pedidos' %}" class="button">Órdenes de Pedidos</a>
               <a href="{% url 'preparar_pedidos' %}" class="button">Preparar Pedidos</a>
           {% endif %}
           {% if roles.is_contador %}
+          <h2>Enlaces disponibles</h2>
               <a href="{% url 'confirmar_pagos' %}" class="button">Confirmar Pagos</a>
               <a href="{% url 'registrar_entregas' %}" class="button">Registrar Entregas</a>
           {% endif %}

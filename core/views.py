@@ -23,34 +23,60 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.db import transaction
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils import timezone
+from django.http import HttpResponseServerError
 
 #LOGICAS API
 
 API_URL = "http://127.0.0.1:5000"
 
-
-
-
 @login_required
+@transaction.atomic
 def compra_confirm(request):
-    # Obtener los datos del carrito para el usuario actual
-    carrito_items = CarroItem.objects.filter(usuario=request.user)
+    try:
+        # Obtener el carrito de compras del usuario
+        carro_compras = CarroCompras.objects.get(usuario=request.user)
 
-    # Procesar los datos del carrito
-    for item in carrito_items:
-        producto_id_api = item.producto_id_api
-        cantidad = item.cantidad
-        
-        # Llamar a la función para actualizar el stock en la API
-        try:
-            actualizar_stock(producto_id_api, cantidad)
-        except Exception as e:
-            # Manejar cualquier error que pueda ocurrir durante la actualización del stock
-            print(f"Error al actualizar el stock para el producto {producto_id_api}: {e}")
-            # Puedes decidir qué hacer en caso de error, como registrar el error o enviar una respuesta al usuario
-        
-    # Aquí puedes renderizar la plantilla de confirmación de la compra
-    return render(request, 'core/compra_confirm.html')
+        # Crear una instancia de compra
+        compra = Compra.objects.create(usuario=request.user)
+
+        # Obtener todos los elementos del carrito
+        items = carro_compras.items.all()
+
+        # Procesar los elementos del carrito
+        for item in items:
+            producto_id_api = item.producto_id_api
+            cantidad = item.cantidad
+            
+            # Llamar a la función para actualizar el stock en la API
+            try:
+                actualizar_stock(producto_id_api, cantidad)
+            except Exception as e:
+                # Manejar cualquier error que pueda ocurrir durante la actualización del stock
+                print(f"Error al actualizar el stock para el producto {producto_id_api}: {e}")
+
+            # Guardar los datos del carrito en la tabla CompraItem
+            CompraItem.objects.create(
+                compra=compra,
+                carro_item=item  # Aquí guardamos el carro_item en lugar del producto_id_api
+            )
+
+            # Eliminar el elemento del carrito
+            item.delete()
+
+        # Aquí puedes renderizar la plantilla de confirmación de la compra
+        mensaje = "La compra fue realizada con éxito. Para ver tus compras, haz clic <a href='/historial/'>aquí</a>."
+        return render(request, 'index', {'mensaje': mensaje})
+    except Exception as e:
+        # Manejar cualquier otra excepción que pueda ocurrir
+        print(f"Error al procesar la compra: {e}")
+        messages.error(request, "Ocurrió un error al procesar la compra. Por favor, inténtalo de nuevo más tarde.")
+        return render(request, 'index')
+    
+
 
 def actualizar_stock(producto_id_api, cantidad):
     try:
@@ -781,3 +807,8 @@ def ordenes_pedidos(request):
         vendedores = User.objects.filter(groups__name='vendedor')
         historial_ordenes = OrdenB.objects.all()
         return render(request, 'core/ordenes_pedidos.html', {'vendedores': vendedores, 'historial_ordenes': historial_ordenes})
+
+
+        
+
+        
