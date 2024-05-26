@@ -28,7 +28,62 @@ from django.http import HttpResponse
 
 API_URL = "http://127.0.0.1:5000"
 
-@permission_required('app.add')
+
+
+
+@login_required
+def compra_confirm(request):
+    # Obtener los datos del carrito para el usuario actual
+    carrito_items = CarroItem.objects.filter(usuario=request.user)
+
+    # Procesar los datos del carrito
+    for item in carrito_items:
+        producto_id_api = item.producto_id_api
+        cantidad = item.cantidad
+        
+        # Llamar a la función para actualizar el stock en la API
+        try:
+            actualizar_stock(producto_id_api, cantidad)
+        except Exception as e:
+            # Manejar cualquier error que pueda ocurrir durante la actualización del stock
+            print(f"Error al actualizar el stock para el producto {producto_id_api}: {e}")
+            # Puedes decidir qué hacer en caso de error, como registrar el error o enviar una respuesta al usuario
+        
+    # Aquí puedes renderizar la plantilla de confirmación de la compra
+    return render(request, 'core/compra_confirm.html')
+
+def actualizar_stock(producto_id_api, cantidad):
+    try:
+        # Construir la URL de la API para actualizar el stock del producto
+        url = f"http://127.0.0.1:5000/productos/{producto_id_api}"
+        
+        # Obtener el stock actual del producto desde la API
+        response = requests.get(url)
+        if response.status_code == 200:
+            producto = response.json()
+            stock_actual = producto.get('stock')
+            if stock_actual is not None:
+                # Calcular el nuevo stock restando la cantidad comprada al stock actual
+                nuevo_stock = stock_actual - cantidad
+                
+                # Actualizar el stock del producto llamando al endpoint PATCH de la API
+                response = requests.patch(f"{url}?stock={nuevo_stock}")
+
+                # Verificar si la solicitud fue exitosa
+                if response.status_code == 200:
+                    # Retornar la respuesta JSON de la API si es necesario
+                    return response.json()
+                else:
+                    # Manejar cualquier error en caso de que la solicitud no sea exitosa
+                    raise Exception(f"Error al actualizar el stock del producto {producto_id_api}: {response.text}")
+            else:
+                raise Exception(f"No se pudo obtener el stock actual del producto {producto_id_api} de la API")
+        else:
+            raise Exception(f"No se pudo obtener el producto {producto_id_api} de la API")
+    except Exception as e:
+        # Manejar cualquier excepción que pueda ocurrir durante el proceso
+        raise Exception(f"Error al actualizar el stock del producto {producto_id_api}: {str(e)}")
+    
 
 def add(request):
     data = {
@@ -212,6 +267,14 @@ def cartdel(request, id):
         return HttpResponse("Error al obtener la información del producto de la API", status=response.status_code)
 
 
+def singleproduct(request, id):
+    response = requests.get(f'http://127.0.0.1:5000/productos/{id}')  
+    producto = response.json()  # Asumiendo que la respuesta es un objeto único de producto
+    data = {
+        'producto': producto
+    }
+    return render(request, 'core/single-product.html', data)
+
 def grupo_requerido(nombre_grupo):
 	def decorator(view_func):
 		@user_passes_test(lambda user: user.groups.filter(name=nombre_grupo).exists())
@@ -314,6 +377,10 @@ def blog(request):
 	return render(request, 'core/blog.html')
 
 
+def confirmar_pagos(request):
+	return render(request, 'core/confirmar_pagos')
+
+
 #def cart(request):
     
    #carro_compras = CarroCompras.objects.get(usuario=request.user)
@@ -394,15 +461,7 @@ def register(request):
 def singleblog(request):
 	return render(request, 'core/single-blog.html')
 
-def singleproduct(request, id):
-    producto = Producto.objects.get(id=id) #buscamos un producto por su id (primer campo base de datos y el otro es nuestro)
-    data = {
-        #'form' : ProductoForm(instance=producto) #Carga la info en el formulario
-        'producto' : producto
-    }
-        
-
-    return render(request,'core/single-product.html',data)
+    
 
 def subsForm(request):
 	return render(request, 'core/subsForm.html')

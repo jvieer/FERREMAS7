@@ -11,6 +11,8 @@ router.register('compra-item', CompraItemViewset)  # Registrar el ViewSet de Com
 
 
 urlpatterns = [
+
+    path('compra-confirmada/', compra_confirm, name='compra_confirmada'),
     # API
     path('api/', include(router.urls)),
 
@@ -22,6 +24,7 @@ urlpatterns = [
     path('blog/', blog, name = "blog"),
     path('blogapi/', blogapi, name = "blogapi"),
     path('cart/', cart, name = "cart"),
+    path('confirmar_pagos/', confirmar_pagos, name='confirmar_pagos'),
     path('cartUser/', cartUser, name = "cartUser"),
     path('category/', category, name = "category"),
     path('checkout/', checkout, name = "checkout"),

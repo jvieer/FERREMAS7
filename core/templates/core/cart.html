@@ -79,7 +79,7 @@
                             <td>
                                 <div class="checkout_btn_inner d-flex align-items-center">
                                     <a class="gray_btn" href="{% url 'category' %}">Seguir Comprando</a>
-                                    <div id="btnPaypal"></div>
+                                    <div id="paypal-button-container"></div>
                                 </div>
                             </td>
                         </tr>
@@ -93,7 +93,7 @@
 {% endblock %}
 
 {% block js %}
-<script src="http://www.paypalobjects.com/api/checkout.js"></script>
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
 <script>
     paypal.Button.render({
         env: 'sandbox',
@@ -103,9 +103,9 @@
         },
         locale: 'es_CL',
         style: {
-            size: 'large', // small, medium, large
-            color: 'black', // gold, black
-            shape: 'rect' // pill , rect
+            size: 'large',
+            color: 'black',
+            shape: 'rect'
         },
         commit: true,
         payment: function (data, actions) {
@@ -120,19 +120,11 @@
         },
         onAuthorize: function (data, actions) {
             return actions.payment.execute().then(function(){
-                // LOGICA DESPUES DEL PAGO
-                Swal.fire({
-                    title: 'Pago Exitoso',
-                    text: 'Pago realizado correctamente!',
-                    icon: 'success',
-                    showCancelButton: false,
-                    confirmButtonColor: '#333CFF',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Aceptar'
-                });
+                // Redirige al usuario a la página de confirmación de compra
+                window.location.href = "{% url 'compra_confirmada' %}";
             });
         },
-        onCancel(data) {
+        onCancel: function (data) {
             Swal.fire({
                 title: 'Pago Cancelado',
                 text: 'El pago ha sido cancelado!',
@@ -143,7 +135,7 @@
                 confirmButtonText: 'Aceptar'
             });
         },
-        onError(err) {
+        onError: function (err) {
             Swal.fire({
                 title: 'Error de pago',
                 text: 'Ha ocurrido un error con el pago!',
@@ -154,6 +146,6 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-    }, '#btnPaypal');
+    }, '#paypal-button-container');
 </script>
 {% endblock %}
